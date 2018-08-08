@@ -1,6 +1,9 @@
-import javafx.beans.property.ReadOnlyDoubleWrapper
-import parser._
-import lexer._
+
+package solution
+
+import solution.parser._
+
+
 import scala.collection.immutable.ListMap
 
 object typechecker {
@@ -55,6 +58,27 @@ object typechecker {
                     sys.error("Trying to apply wrong function")
                   }
                   ListType(rest)
+                }
+              }
+            }
+          }
+        }
+      }
+
+      case FilterOperation(fName, listName) => (fName, listName) match {
+        case (IdentifierStatementNode(name), IdentifierStatementNode(list)) => typeEnvironment.get(name) match {
+          case None => sys.error("Could not find type of function in map")
+          case Some(typ) => typ match {
+            case MultiType(fst, rest) => {
+              typeEnvironment.get(list) match {
+                case None => sys.error("Could not find type of list in map")
+                case Some(ListType(node)) => {
+                  if (!sameType(node, fst)) {
+                    sys.error("Trying to apply wrong function")
+                  }
+                  rest match {
+                    case BoolType => ListType(node)
+                  }
                 }
               }
             }
