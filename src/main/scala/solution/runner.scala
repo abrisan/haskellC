@@ -1,9 +1,12 @@
-import evaluator.{FuncValue, ListValue, Num, Value, evaluateFunction}
-import lexer.{HaskellLexer, Identifier}
-import parser.{Decl, FuncDecl, HaskellParser, Script}
-import typechecker._
 
-import scala.collection.immutable
+package solution
+
+import solution.evaluator._
+import solution.lexer.HaskellLexer
+import solution.parser.{Decl, FuncDecl, HaskellParser, Script}
+import solution.typechecker._
+
+
 import scala.collection.immutable.ListMap
 import scala.collection.mutable.ListBuffer
 import scala.io.{Source, StdIn}

@@ -61,6 +61,26 @@ object typechecker {
           }
         }
       }
+      case FilterOperation(fName, listName) => (fName, listName) match {
+        case (IdentifierStatementNode(name), IdentifierStatementNode(list)) => typeEnvironment.get(name) match {
+          case None => sys.error("Could not find type of function in map")
+          case Some(typ) => typ match {
+            case MultiType(fst, rest) => {
+              typeEnvironment.get(list) match {
+                case None => sys.error("Could not find type of list in map")
+                case Some(ListType(node)) => {
+                  if (!sameType(node, fst)) {
+                    sys.error("Trying to apply wrong function")
+                  }
+                  rest match {
+                    case BoolType => ListType(node)
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
   }
 
   def typeCheckFunction(function: Decl, typeMap: ListMap[String, TypeNode]): Boolean = function match {

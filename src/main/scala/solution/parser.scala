@@ -1,9 +1,11 @@
-import lexer._
-import parser.HaskellParser
-import typechecker._
 
-import scala.collection.immutable.ListMap
-import scala.util.parsing.combinator.{Parsers, RegexParsers}
+package solution
+
+import solution.lexer._
+import solution.typechecker._
+
+import scala.util.parsing.combinator.Parsers
+
 import scala.util.parsing.input.{NoPosition, Position, Reader}
 
 object parser {
@@ -32,6 +34,7 @@ object parser {
                                  operation: BinaryOperation) extends StatementNode
 
   case class MapOperation(functionName: StatementNode, listName: StatementNode) extends StatementNode
+  case class FilterOperation(functionName: StatementNode, listName: StatementNode) extends StatementNode
   case class IdentifierStatementNode(identName: String) extends StatementNode
   case class NumberStatementNode(value: Double) extends StatementNode
   case class BooleanStatementNode(value: Boolean) extends StatementNode
@@ -109,7 +112,13 @@ object parser {
       case _ ~ name ~ lst => MapOperation(name, lst)
     }
 
-    def statementNodeNonBinary: Parser[StatementNode] = identStmnt | numberStmnt | booleanStmnt | mapOperation
+
+    def filterOperation: Parser[FilterOperation] = FilterToken ~ statementNode ~ statementNode ^^ {
+      case _ ~ name ~ lst => FilterOperation(name, lst)
+    }
+
+    def statementNodeNonBinary: Parser[StatementNode] = identStmnt | numberStmnt | booleanStmnt | mapOperation | filterOperation
+
 
     def statementNode: Parser[StatementNode] = binaryOperation | statementNodeNonBinary
 

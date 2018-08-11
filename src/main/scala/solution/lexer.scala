@@ -1,3 +1,7 @@
+
+package solution
+
+
 import scala.util.parsing.combinator.RegexParsers
 
 object lexer {
@@ -20,6 +24,9 @@ object lexer {
   case object LeftBracket extends Token
   case object RightBracket extends Token
   case object Colon extends Token
+
+  case object FilterToken extends Token
+
 
   object HaskellLexer extends RegexParsers {
 
@@ -64,6 +71,10 @@ object lexer {
 
     def drawnfrom: Parser[DrawnFrom.type] = "<-" ^^ (_ => DrawnFrom)
 
+
+    def filterT: Parser[FilterToken.type ] = "filter" ^^ (_ => FilterToken)
+
+
     def tokens: Parser[List[Token]] = {
       phrase(rep1(
           boolean |
@@ -77,6 +88,7 @@ object lexer {
           rightsqbracket |
             drawnfrom |
             mapT |
+            filterT |
             identifier
       )) ^^ {rawTokens => rawTokens}
     }

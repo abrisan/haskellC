@@ -1,5 +1,7 @@
-import lexer.Identifier
-import parser._
+package solution
+
+import solution.lexer.Identifier
+import solution.parser._
 
 import scala.collection.immutable.ListMap
 
@@ -46,6 +48,26 @@ object evaluator {
     }
   }
 
+  def filterOnFunction(func: solution.parser.StatementNode, vals: List[Value], varBindings: ListMap[String, solution.evaluator.Value]): Value = {
+    evaluateStatement(func, varBindings) match {
+      case FuncValue(f) => {
+        vals match {
+          case Nil => ListValue(List())
+          case x :: xs => filterOnFunction(func, xs, varBindings) match {
+            case ListValue(t) => {
+              evaluateFunctionWithArguments(f, varBindings + (f.variables.head.name -> x)) match {
+                case Bool(true) => ListValue(
+                  x :: t
+                )
+                case Bool(false) => ListValue(t)
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
   def evaluateStatement(stmnt: StatementNode, varBindings: ListMap[String, Value]): Value = stmnt match {
     case IdentifierStatementNode(name) => varBindings.get(name) match {
       case None => sys.error("No identifier " + name)
@@ -62,6 +84,9 @@ object evaluator {
       evaluateStatement(lstName, varBindings) match {
         case ListValue(vals) => applyFunction(funcName, vals, varBindings)
       }
+    }
+    case FilterOperation(funcName, lstName) => evaluateStatement(lstName, varBindings) match {
+      case ListValue(vals) => filterOnFunction(funcName, vals, varBindings)
     }
   }
 

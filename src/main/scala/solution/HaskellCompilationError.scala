@@ -1,3 +1,7 @@
+
+package solution
+
+
 abstract class HaskellCompilationError
 
 case class LexerError(message: String) extends HaskellCompilationError

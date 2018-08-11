@@ -16,6 +16,7 @@ object lexer {
   case object RightSqBracket extends Token
   case object DrawnFrom extends Token
   case object MapT extends Token
+  case object FilterT extends Token
   case object LambdaBegin extends Token
   case object LeftBracket extends Token
   case object RightBracket extends Token
@@ -62,6 +63,8 @@ object lexer {
 
     def mapT: Parser[MapT.type] = "map" ^^ (_ => MapT)
 
+    def filterT: Parser[FilterT.type] = "filter" ^^ (_ => FilterT)
+
     def drawnfrom: Parser[DrawnFrom.type] = "<-" ^^ (_ => DrawnFrom)
 
     def tokens: Parser[List[Token]] = {
@@ -77,6 +80,7 @@ object lexer {
           rightsqbracket |
             drawnfrom |
             mapT |
+            filterT |
             identifier
       )) ^^ {rawTokens => rawTokens}
     }
